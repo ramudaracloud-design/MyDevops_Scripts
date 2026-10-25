@@ -1,3 +1,29 @@
+# Python , UV, FastAPI installation and Fastapi Service creation Steps in Amazon linux Ec2
+
+We'll create three scripts:
+
+1. `install_python_uv.sh` — installs `uv` and the selected Python version.
+2. `setup_fastapi.sh` — creates the FastAPI project and installs dependencies.
+3. `create_fastapi_service.sh` — creates and enables the `systemd` service.
+
+We'll also create a fourth optional script, `deploy_fastapi.sh`, to install updated dependencies and restart the service whenever you change your code.
+
+# 1. Directory structure
+
+Create a folder for your deployment scripts:
+
+```
+fastapi-deployment/
+├── install_python_uv.sh
+├── setup_fastapi.sh
+├── create_fastapi_service.sh
+└── deploy_fastapi.sh
+```
+
+These scripts assume your application directory is `/home/ec2-user/fastapi-app`, your service is named `fastapi`, and your application uses `main.py` with `app = FastAPI()`
+ 
+ 
+ 
  # Install Python and uv : install_python_uv.sh
  This script:
 
