@@ -18,6 +18,8 @@ fastapi-deployment/
 ├── setup_fastapi.sh
 ├── create_fastapi_service.sh
 └── deploy_fastapi.sh
+└── setup_nginx.sh
+
 ```
 
 These scripts assume your application directory is `/home/ec2-user/fastapi-app`, your service is named `fastapi`, and your application uses `main.py` with `app = FastAPI()`
@@ -148,12 +150,111 @@ My recommendation: Once these scripts work, keep them in a Git repository. You c
 
 It assumes your existing project is /home/ec2-user/fastapi-app and your service is named fastapi.
 
-** Make it executable: **: 
+
+
+
+## 4. Run the script
+
+Make it executable:
+
+```
 chmod +x setup_nginx.sh
+```
 
-- RUN as : ./setup_nginx.sh
-- when prompt  : api.example.com
+Run it as `ec2-user` (do not run the entire script using `sudo`):
 
+```
+./setup_nginx.sh
+```
+
+When prompted, enter your actual domain, such as:
+
+```
+api.example.com
+```
+
+The script will install Nginx, change Uvicorn to listen on `127.0.0.1:8000`, create the Nginx configuration, and restart both services.
+
+## 5. Configure DNS
+
+At your domain provider, create an A record:
+
+| DNS setting | Value                        |
+| ----------- | ---------------------------- |
+| Type        | A                            |
+| Name / Host | `api`                        |
+| Value       | Your EC2 public IPv4 address |
+| TTL         | Provider default             |
+
+For example, if your domain is `example.com`, the resulting hostname is `api.example.com`.
+
+Consider associating an Elastic IP with your EC2 instance so the IP address remains stable across instance stops and starts.
+
+## 6. Update the EC2 Security Group
+
+Open AWS Console → EC2 → Instances → your instance → Security → Security Groups → Inbound rules.
+
+Configure:
+
+| Port | Source       | Purpose                |
+| ---- | ------------ | ---------------------- |
+| 22   | Your IP only | SSH administration     |
+| 80   | `0.0.0.0/0`  | Public HTTP API access |
+
+After confirming Nginx works, remove the inbound port `8000` rule. Nginx and FastAPI communicate over localhost, so no public rule for port 8000 is needed.
+
+## 7. Verify the deployment
+
+Run these commands on EC2:
+
+```
+sudo systemctl status nginx
+sudo systemctl status fastapi
+```
+
+Confirm FastAPI is listening only on localhost:
+
+```
+sudo ss -ltnp | grep ':8000'
+```
+
+The expected address is:
+
+```
+127.0.0.1:8000
+```
+
+Test the reverse proxy locally:
+
+```
+curl -H "Host: api.example.com" http://127.0.0.1/health
+curl -H "Host: publicip" http://127.0.0.1/health
+```
+
+Replace `api.example.com` with your actual domain. Expected response:
+
+```
+{"status":"healthy"}
+```
+
+Finally, test from your browser:
+
+`http://api.example.com/docs`
+
+If DNS has propagated and the Security Group is configured correctly, the FastAPI interactive documentation should appear.
+
+## 8. Troubleshooting commands
+
+| Problem                   | Command                                            |
+| ------------------------- | -------------------------------------------------- |
+| Check Nginx configuration | `sudo nginx -t`                                    |
+| View Nginx errors         | `sudo tail -n 50 /var/log/nginx/fastapi_error.log` |
+| View access logs          | `sudo tail -f /var/log/nginx/fastapi_access.log`   |
+| Restart Nginx             | `sudo systemctl restart nginx`                     |
+| Restart FastAPI           | `sudo systemctl restart fastapi`                   |
+| Check DNS resolution      | `getent hosts api.example.com`                     |
+
+One final recommendation: this script sets up HTTP only. Once the domain works, the next step should be enabling HTTPS with a TLS certificate, for example through Let's Encrypt and Certbot, so API traffic is encrypted.
 
 
 
