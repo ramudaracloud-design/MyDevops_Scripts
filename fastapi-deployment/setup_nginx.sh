@@ -9,7 +9,9 @@ NGINX_CONF="/etc/nginx/conf.d/fastapi.conf"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 
 # Ask for the domain
-read -r -p "Enter your API domain (e.g. api.example.com): " DOMAIN
+# read -r -p "Enter your API domain (e.g. api.example.com): " DOMAIN
+
+read -r -p "Enter your EC2 public IPv4 address: " DOMAIN
 
 if [[ -z "$DOMAIN" || "$DOMAIN" == *"://"* || "$DOMAIN" == */* ]]; then
     echo "ERROR: Enter a domain name only, without http:// or a path."
