@@ -144,6 +144,17 @@ sudo journalctl -u fastapi -f
 My recommendation: Once these scripts work, keep them in a Git repository. You can reuse them whenever you launch a new Amazon Linux 2023 EC2 instance, rather than repeating each installation step manually.
 
 
+# NGNIX Setup ; setup_nginx.sh
+
+It assumes your existing project is /home/ec2-user/fastapi-app and your service is named fastapi.
+
+** Make it executable: **: 
+chmod +x setup_nginx.sh
+
+- RUN as : ./setup_nginx.sh
+- when prompt  : api.example.com
+
+
 
 
 
