@@ -3,7 +3,7 @@
 set -Eeuo pipefail
 
 APP_DIR="${APP_DIR:-$HOME/fastapi-app}"
-PYTHON_VERSION="${PYTHON_VERSION:-3.15}"
+PYTHON_VERSION="${PYTHON_VERSION:-3.14}"
 
 export PATH="$HOME/.local/bin:$PATH"
 

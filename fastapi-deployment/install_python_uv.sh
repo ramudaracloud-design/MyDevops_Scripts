@@ -3,7 +3,7 @@
 set -Eeuo pipefail
 
 # Amazon Linux 2023: install prerequisites
-sudo dnf install -y curl ca-certificates
+# sudo dnf install -y curl ca-certificates
 
 # Install uv for the current user
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -20,7 +20,7 @@ echo "Installed uv:"
 uv --version
 
 # Choose the Python version; override when running the script
-PYTHON_VERSION="${PYTHON_VERSION:-3.15}"
+PYTHON_VERSION="${PYTHON_VERSION:-3.14}"
 
 echo "Installing Python ${PYTHON_VERSION}..."
 uv python install "$PYTHON_VERSION"
