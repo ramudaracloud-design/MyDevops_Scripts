@@ -258,7 +258,13 @@ One final recommendation: this script sets up HTTP only. Once the domain works, 
 
 
 
+# NEXT PENDING TASKS
 
+- **HTTPS with Let's Encrypt** — after obtaining a domain.
+- **Dockerize FastAPI** — package the application and dependencies into a container.
+- **AWS Application Load Balancer** — learn health checks, target groups, and TLS termination.
+- **CI/CD pipeline** — automate deployments whenever you push code to GitHub.
+- **CloudWatch monitoring** — collect application and Nginx logs and configure alarms.
 
 
 
